@@ -3,8 +3,11 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import cors from "cors"
+import path from "path"
 
 dotenv.config()
+
+const __dirname = path.resolve()
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -32,6 +35,13 @@ import noteRouter from "./routes/note.route.js"
 
 app.use("/api/auth", authRouter)
 app.use("/api/note", noteRouter)
+
+// for deploy 
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")))
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend","dist","index.html"))
+  })
 
 // error handling
 app.use((err, req, res, next) => {
